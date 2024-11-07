@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waste Management and Complaint Handling</title>
+</head>
+<body>
+    <h1>Waste Management Complaint System</h1>
+    <style>
+        
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+        label, input, button {
+            margin-bottom: 10px;
+            width: 100%;
+        }
+        button {
+            padding: 8px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+
+    
+    <h2>Register a Complaint</h2>
+    <form id="complaintForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" required>
+
+        <label for="phone">Phone Number:</label>
+        <input type="tel" id="phone" required>
+
+        <label for="location">Exact Location:</label>
+        <input type="text" id="location" required>
+
+        <label for="description">Complaint Description:</label>
+        <input type="text" id="description" required>
+
+        <label for="priority">Priority (1 = High, 2 = Medium, 3 = Low):</label>
+        <input type="number" id="priority" min="1" max="3" required>
+
+        <button type="submit">Submit Complaint</button>
+    </form>
+    <p id="complaintMessage"></p>
+
+    
+    <h2>Resolve Complaint</h2>
+    <form id="resolveForm">
+        <label for="complaintId">Enter Complaint ID:</label>
+        <input type="number" id="complaintId" required>
+        <button type="submit">Resolve Complaint</button>
+    </form>
+    <p id="resolveMessage"></p>
+
+    <script>
+        
+        document.getElementById('complaintForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const location = document.getElementById('location').value;
+            const description = document.getElementById('description').value;
+            const priority = document.getElementById('priority').value;
+
+            const response = await fetch('http://localhost:3000/report', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, phone, location, description, priority })
+            });
+
+            const result = await response.json();
+            document.getElementById('complaintMessage').innerText = result.message || 'Complaint submitted successfully!';
+            document.getElementById('complaintForm').reset();
+        });
+
+        
+        document.getElementById('resolveForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const complaintId = document.getElementById('complaintId').value;
+
+            const response = await fetch(`http://localhost:3000/resolve/${complaintId}`, {
+                method: 'POST'
+            });
+
+            const result = await response.json();
+            document.getElementById('resolveMessage').innerText = result.message || 'Complaint resolved successfully!';
+            document.getElementById('resolveForm').reset();
+        });
+    </script>
+</body>
+</html>
